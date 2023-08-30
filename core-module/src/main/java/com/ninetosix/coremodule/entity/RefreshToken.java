@@ -1,0 +1,45 @@
+package com.ninetosix.coremodule.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class RefreshToken {
+    @Id
+    private String email;
+
+    private String token;
+
+    // TODO: expiryDate 로 변경
+    private Date expireDate;
+
+    private LocalDateTime insertDate;
+
+    private LocalDateTime updateDate;
+
+    public static RefreshToken create(String email, String token, long expireTime) {
+        return RefreshToken.builder()
+                .email(email)
+                .token(token)
+                .expireDate(new Date(expireTime))
+                .insertDate(LocalDateTime.now())
+                .build();
+    }
+
+    public void updateToken(String token, long expireTime) {
+        this.token = token;
+        this.expireDate = new Date(expireTime);
+        this.updateDate = LocalDateTime.now();
+    }
+}

@@ -1,0 +1,75 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: none # 운영에는 create 하면 안됨 > 서버 재구동 시 모두 없어지므로..
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    cors:
+      mapping: "/**"
+      allow-credentials: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+  # Gmail SMTP 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+#          connectiontimeout: 5000
+#          timeout: 5000
+#          writetimeout: 5000
+
+logging:
+  level:
+    web: info
+    org:
+      springframework:
+        boot:
+          autoconfigure : error
+decorator:
+  datasource:
+    enabled: true
+
+jwt:
+  secret: ${jwt.key}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ATTENDANCE
+    #    username: root
+    #    password: 1q2w3e4r
+    username: admin
+    password: nts0918!
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod

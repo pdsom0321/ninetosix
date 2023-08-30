@@ -1,0 +1,31 @@
+package com.ninetosix.apimodule.nts.controller;
+
+import com.ninetosix.apimodule.nts.dto.member.GenerateCodeReqDTO;
+import com.ninetosix.apimodule.nts.dto.member.VerifyCodeReqDTO;
+import com.ninetosix.apimodule.nts.service.AuthenticationCodeService;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+public class AuthenticationCodeController {
+    private final AuthenticationCodeService authenticationCodeService;
+
+    @ApiOperation(value = "회원가입/비밀번호 변경 시 인증번호 발급")
+    @PostMapping("/member/generate-code")
+    public ResponseEntity<Void> generateCode(@RequestBody GenerateCodeReqDTO reqDTO) {
+        authenticationCodeService.generateCode(reqDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "회원가입/비밀번호 시 인증번호 검증")
+    @PostMapping("/member/verify-code")
+    public ResponseEntity<Boolean> verifyCode(@RequestBody VerifyCodeReqDTO reqDTO) {
+        return ResponseEntity.ok(authenticationCodeService.verifyCode(reqDTO));
+    }
+
+}

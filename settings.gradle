@@ -1,0 +1,4 @@
+rootProject.name = 'ninetosix'
+include 'api-module'
+include 'core-module'
+include 'admin-module'
