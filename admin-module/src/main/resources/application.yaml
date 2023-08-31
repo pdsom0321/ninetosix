@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: none # \uC6B4\uC601\uC5D0\uB294 create \uD558\uBA74 \uC548\uB428 > \uC11C\uBC84 \uC7AC\uAD6C\uB3D9 \uC2DC \uBAA8\uB450 \uC5C6\uC5B4\uC9C0\uBBC0\uB85C..
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    cors:
+      mapping: "/**"
+      allow-credentials: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ATTENDANCE
+    username: root
+    password: 1q2w3e4r
+#    username: admin
+#    password: nts0918!
+
+logging:
+  level:
+    web: info
+    org:
+      springframework:
+        boot:
+          autoconfigure : error
+decorator:
+  datasource:
+    enabled: true
