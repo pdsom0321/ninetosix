@@ -12,17 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @Table
 public class Location {
-
     @Id
     @Column(name = "location_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // TODO: code 삭제 (불필요)
-    @Column(nullable = false, unique = true)
-    private String code;
-
-    @Column(nullable = false)
+    @Column(unique = true)
     private String name;
 
     @Column(nullable = false)

@@ -17,10 +17,6 @@ public class Team {
     @Column(name = "team_id")
     private Long id;
 
-    // TODO: code 삭제 (불필요)
-    @Column(unique = true, length = 50)
-    private String code;
-
     @Column(length = 100)
     private String name;
 

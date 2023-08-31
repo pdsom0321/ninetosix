@@ -21,8 +21,7 @@ public class RefreshToken {
 
     private String token;
 
-    // TODO: expiryDate 로 변경
-    private Date expireDate;
+    private Date expiryDate;
 
     private LocalDateTime insertDate;
 
@@ -32,14 +31,14 @@ public class RefreshToken {
         return RefreshToken.builder()
                 .email(email)
                 .token(token)
-                .expireDate(new Date(expireTime))
+                .expiryDate(new Date(expireTime))
                 .insertDate(LocalDateTime.now())
                 .build();
     }
 
     public void updateToken(String token, long expireTime) {
         this.token = token;
-        this.expireDate = new Date(expireTime);
+        this.expiryDate = new Date(expireTime);
         this.updateDate = LocalDateTime.now();
     }
 }

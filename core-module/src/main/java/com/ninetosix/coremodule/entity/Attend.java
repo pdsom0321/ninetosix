@@ -31,8 +31,7 @@ public class Attend {
 
     private String attendCode;
 
-    //TODO: locationId로 변경
-    private String locationCode;
+    private Long locationId;
 
     private Long workTime;
 
@@ -45,13 +44,13 @@ public class Attend {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Attend createAttend(String attendDate, String inTime, String attendCode, String locationCode, Member member){
+    public static Attend createAttend(String attendDate, String inTime, String attendCode, Long locationId, Member member){
         return Attend
                 .builder()
                 .attendDate(attendDate)
                 .inTime(inTime)
                 .attendCode(attendCode)
-                .locationCode(locationCode)
+                .locationId(locationId)
                 .member(member)
                 .insertDate(LocalDateTime.now())
                 .build();
@@ -70,9 +69,9 @@ public class Attend {
         this.updateDate = LocalDateTime.now();
     }
 
-    public void updateInTimeAndLocationCode(String time, String locationCode){
+    public void updateInTimeAndLocationId(String time, Long locationId){
         this.inTime = time;
-        this.locationCode = locationCode;
+        this.locationId = locationId;
         this.updateDate = LocalDateTime.now();
     }
 

@@ -12,15 +12,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table
 public class CompanyLocation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_location_id")
     private Long id;
-
-    // TODO: code 삭제 (불필요)
-    @Column(unique = true)
-    private String code;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -29,5 +24,4 @@ public class CompanyLocation {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
-
 }
