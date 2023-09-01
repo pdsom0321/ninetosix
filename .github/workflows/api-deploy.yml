@@ -1,0 +1,99 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "api-deploy" ]
+
+env:
+  # 도커 컨테이너명
+  CONTAINER_NAME: 'ninetosix-api'
+  # ECR 리포지토리명
+  ECR_REPOSITORY: 'ninetosix-api'
+  # ECS 클러스터명
+  ECS_CLUSTER: 'ninetosix-api-cluster'
+  # ECS 서비스명
+  ECS_SERVICE: 'ninetosix-api-ecs'
+  # ECS Task definition 파일명
+  ECS_TASK_DEFINITION: 'task-definition.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Github Repository Secrets를 통해 환경 변수 파일을 생성
+      - name: Generate Environment Variables File for Production
+        env:
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          echo MAIL_USERNAME="$MAIL_USERNAME" >> env.yml &&
+          echo MAIL_PASSWORD="$MAIL_PASSWORD" >> env.yml &&
+          echo JWT_SECRET_KEY="$JWT_SECRET_KEY" >> env.yml &&
+          echo DB_URL="$DB_URL" >> env.yml &&
+          echo DB_USERNAME="$DB_USERNAME" >> env.yml &&
+          echo DB_PASSWORD="$DB_PASSWORD" >> env.yml
+
+      # gradlw 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: |
+          cd api-module
+          chmod +x gradlew
+
+      # 프로젝트 build
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # AWS 권한 확인
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      # ECR 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # ECR에 도커 이미지 Push
+      - name: Push docker image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # ECS Task 정의
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      # ECS Task Push
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
