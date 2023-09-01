@@ -54,7 +54,9 @@ jobs:
 
       # 프로젝트 build
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: |
+          cd api-module
+          ./gradlew clean build
 
       # AWS 권한 확인
       - name: Configure AWS credentials
