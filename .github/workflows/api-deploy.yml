@@ -2,7 +2,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "api-deploy" ]
+    branches: [ "main" ]
 
 env:
   # 도커 컨테이너명
