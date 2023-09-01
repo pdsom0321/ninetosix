@@ -16,11 +16,9 @@ spring:
       allow-credentials: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ATTENDANCE
-    username: root
-    password: 1q2w3e4r
-#    username: admin
-#    password: nts0918!
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
 
 logging:
   level:

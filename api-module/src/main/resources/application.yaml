@@ -55,13 +55,6 @@ spring:
   config:
     activate:
       on-profile: local
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ATTENDANCE
-    #    username: root
-    #    password: 1q2w3e4r
-    username: admin
-    password: nts0918!
 ---
 spring:
   config:
