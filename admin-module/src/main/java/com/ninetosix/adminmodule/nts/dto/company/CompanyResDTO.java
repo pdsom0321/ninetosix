@@ -1,4 +1,4 @@
-package com.ninetosix.adminmodule.nts.dto;
+package com.ninetosix.adminmodule.nts.dto.company;
 
 import com.ninetosix.coremodule.entity.Company;
 

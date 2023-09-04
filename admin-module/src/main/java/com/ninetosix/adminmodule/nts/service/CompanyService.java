@@ -1,6 +1,6 @@
 package com.ninetosix.adminmodule.nts.service;
 
-import com.ninetosix.adminmodule.nts.dto.CompanyResDTO;
+import com.ninetosix.adminmodule.nts.dto.company.CompanyResDTO;
 import com.ninetosix.coremodule.entity.Company;
 import com.ninetosix.coremodule.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
