@@ -27,7 +27,7 @@ public class SpringSecurityConfig {
                         "/swagger*/**",
                         "/webjars/**",
                         "/login").permitAll()
-                .antMatchers("/main").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
 
                 // 시큐리티는 기본적으로 세션을 사용
@@ -41,7 +41,7 @@ public class SpringSecurityConfig {
                 .loginProcessingUrl("/loginProc")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/main", true)
+                .defaultSuccessUrl("/", true)
                 .permitAll()
 
                 .and()
