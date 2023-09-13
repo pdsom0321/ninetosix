@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Please sign in</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="/css/style.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">-->
+</head>
+<body>
+<div class="container">
+    <form name="frm" class="form-login" method="post" action="/loginProc">
+        <h1 class="form-signin-heading">Please sign in</h1>
+        <p>
+            <label for="username" class="sr-only">email</label>
+            <input type="text" id="username" name="email" class="form-control" placeholder="email" required=""
+                   autofocus="">
+        </p>
+        <p>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="password"
+                   required="">
+        </p>
+        <input name="_csrf" type="hidden" value="241d184c-7835-46ae-a907-e84b28ac2e63">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+        <!--<button class="btn btn-lg btn-primary btn-block" type="" onclick="goSignup();" >가입</button>-->
+    </form>
+</div>
+</body>
+
+</html>

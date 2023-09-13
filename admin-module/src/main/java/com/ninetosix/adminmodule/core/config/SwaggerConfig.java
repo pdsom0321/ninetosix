@@ -1,4 +1,4 @@
-package com.ninetosix.adminmodule;
+package com.ninetosix.adminmodule.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
