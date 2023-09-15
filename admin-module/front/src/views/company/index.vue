@@ -1,6 +1,7 @@
 <script setup>
 import company from './company.vue'
 import team from './team.vue'
+import location from './location.vue'
 </script>
 
 <template>
@@ -82,7 +83,7 @@ import team from './team.vue'
           aria-labelledby="location-tab"
           tabindex="0"
         >
-          ...
+          <location />
         </div>
       </div>
     </div>

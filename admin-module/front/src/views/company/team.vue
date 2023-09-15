@@ -1,5 +1,8 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watchEffect } from 'vue'
+import { useCompanyStore } from '@/stores/company'
+
+const store = useCompanyStore()
 
 const teams = reactive([
   {
@@ -8,7 +11,17 @@ const teams = reactive([
   }
 ])
 
+watchEffect(() => {
+  console.log('chenge cid', store.compId)
+})
+
 const addList = reactive([])
+
+defineExpose({
+  loadTeam(teamId) {
+    console.log('teamId : ', teamId)
+  }
+})
 
 const addTeam = (idx) => {
   //샘플, 실제로는 서버에 저장 후 다시 get api 호출해서 데이터 바인딩
@@ -16,7 +29,7 @@ const addTeam = (idx) => {
   addList.splice(idx, 1)
 }
 
-const saveteam = (idx) => {
+const saveTeam = (idx) => {
   teams[idx].editMode = false
 }
 
@@ -34,6 +47,7 @@ const delTeam = (idx) => {
 </script>
 
 <template>
+  compId : {{ store.compId }}
   <!-- <div class="w-100 bg-danger">
     <button class="sticky-top btn btn-sm btn-outline-secondary" @click="addList.push({})">
       추가

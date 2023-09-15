@@ -1,5 +1,10 @@
 <script setup>
 import { reactive } from 'vue'
+import { useCompanyStore } from '@/stores/company'
+import lib from '@/util/apiUtil'
+import axios from 'axios'
+
+const store = useCompanyStore()
 
 const companyies = reactive([
   {
@@ -35,6 +40,17 @@ const delComp = (idx) => {
     companyies.splice(idx, 1)
   }
 }
+
+;(() => {
+  lib
+    .api({
+      url: '/company',
+      method: 'get'
+    })
+    .then((res) => {
+      console.log(res)
+    })
+})()
 </script>
 
 <template>
@@ -72,7 +88,8 @@ const delComp = (idx) => {
               class="form-control cursor-pointer"
               :class="company.editMode ? '' : 'bg-transparent border-0'"
               v-model="company.name"
-              :disabled="!company.editMode"
+              :readonly="!company.editMode"
+              @click="store.compId = company.id"
             />
             <button
               v-if="!company.editMode"
