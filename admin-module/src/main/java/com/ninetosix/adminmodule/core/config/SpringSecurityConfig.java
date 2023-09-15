@@ -26,7 +26,8 @@ public class SpringSecurityConfig {
                 .antMatchers("/v2/api-docs/**",
                         "/swagger*/**",
                         "/webjars/**",
-                        "/login").permitAll()
+                        "/login",
+                        "/**").permitAll()
                 .antMatchers("/").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
 
