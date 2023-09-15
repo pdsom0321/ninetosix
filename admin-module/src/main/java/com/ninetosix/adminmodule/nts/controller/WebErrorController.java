@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebErrorController implements ErrorController {
 
     @GetMapping("/error")
-    public String redirctRoot() {
+    public String redirectRoot() {
         return "index.html";
     }
 }

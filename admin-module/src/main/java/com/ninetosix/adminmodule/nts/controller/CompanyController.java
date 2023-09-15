@@ -31,7 +31,7 @@ public class CompanyController {
     @ApiOperation(value = "회사 상세 조회")
     @GetMapping ("company/{id}")
     public ResponseEntity<CompanyResDTO> getCompany(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getCompany(id));
+        return ResponseEntity.ok(companyService.getCompanyResDTO(id));
     }
 
     @ApiOperation(value = "회사 정보 수정")

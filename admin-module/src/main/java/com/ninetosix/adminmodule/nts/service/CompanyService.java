@@ -27,7 +27,11 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public CompanyResDTO getCompany(Long id) {
+    public Company getCompany(Long id) {
+        return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
+    public CompanyResDTO getCompanyResDTO(Long id) {
         return companyRepository.findById(id).map(CompanyResDTO::of).orElseThrow(NoSuchElementException::new);
     }
 
