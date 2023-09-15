@@ -19,6 +19,7 @@
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "lodash": "^4.17.21",
+    "lottie-web": "^5.12.2",
     "pinia": "^2.0.36",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"

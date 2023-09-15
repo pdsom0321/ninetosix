@@ -4,6 +4,7 @@ import company from './company'
 // import customer from './customer'
 import contents from './contents'
 import system from './system'
+import loadingModule from '@/util/loadingModule'
 
 const routes = [
   {
@@ -39,8 +40,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('[to] : ' + to, '[from] : ' + from)
+  loadingModule.hide()
   next()
 })
 
+router.afterEach((to, from) => {
+  loadingModule.hide()
+})
 export default router

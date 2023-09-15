@@ -2,20 +2,33 @@
 import { reactive } from 'vue'
 import { useCompanyStore } from '@/stores/company'
 import lib from '@/util/apiUtil'
-import axios from 'axios'
+import _ from 'lodash'
 
 const store = useCompanyStore()
 
 const companyies = reactive([
-  {
-    id: 1,
-    name: 'GS ITM'
-  },
-  {
-    id: 2,
-    name: 'GS 칼텍스'
-  }
+  // {
+  //   id: 1,
+  //   name: 'GS ITM'
+  // },
+  // {
+  //   id: 2,
+  //   name: 'GS 칼텍스'
+  // }
 ])
+
+const getCompanies = () => {
+  companyies.splice(0)
+
+  lib
+    .api({
+      url: '/company',
+      method: 'get'
+    })
+    .then((res) => {
+      _.merge(companyies, res)
+    })
+}
 
 const addList = reactive([])
 
@@ -26,7 +39,17 @@ const addComp = (idx) => {
 }
 
 const saveComp = (idx) => {
-  companyies[idx].editMode = false
+  lib
+    .api({
+      url: `/company/${companyies[idx].id}`,
+      method: 'put',
+      data: {
+        name: companyies[idx].name
+      }
+    })
+    .then(() => {
+      getCompanies()
+    })
 }
 
 const editComp = (idx) => {
@@ -35,30 +58,36 @@ const editComp = (idx) => {
 
 const delComp = (idx) => {
   if (confirm('정말 삭제하시겠습니까?')) {
-    //삭제로직
-    console.log(idx)
-    companyies.splice(idx, 1)
+    lib
+      .api({
+        url: `/company/${companyies[idx].id}`,
+        method: 'delete'
+      })
+      .then(() => {
+        getCompanies()
+      })
   }
 }
 
-;(() => {
+const companyAPI = ({ id, method }, callback) => {
   lib
     .api({
-      url: '/company',
-      method: 'get'
+      url: `/company/${id}`,
+      method: method
     })
     .then((res) => {
-      console.log(res)
+      // 콜백
+      callback(res)
+      getCompanies()
     })
+}
+
+;(() => {
+  getCompanies()
 })()
 </script>
 
 <template>
-  <!-- <div class="w-100 bg-danger">
-    <button class="sticky-top btn btn-sm btn-outline-secondary" @click="addList.push({})">
-      추가
-    </button>
-  </div> -->
   <table class="table table-bordered table-hover text-center align-middle">
     <colgroup>
       <col />
@@ -78,9 +107,13 @@ const delComp = (idx) => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(company, index) in companyies">
-        <td>{{ company.id }}</td>
-        <td>
+      <tr
+        v-for="(company, index) in companyies"
+        :class="store.compId == company.id ? 'bg-primary-subtle' : ''"
+        @click="store.compId = company.id"
+      >
+        <td class="bg-transparent">{{ company.id }}</td>
+        <td class="bg-transparent">
           <div class="input-group">
             <input
               type="text"
@@ -89,7 +122,6 @@ const delComp = (idx) => {
               :class="company.editMode ? '' : 'bg-transparent border-0'"
               v-model="company.name"
               :readonly="!company.editMode"
-              @click="store.compId = company.id"
             />
             <button
               v-if="!company.editMode"

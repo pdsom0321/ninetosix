@@ -13,8 +13,8 @@ dotenvExpand.expand(
 )
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    port: 8082,
+  devServer: {
+    // port: 8082,
     proxy: {
       '/api': {
         target: process.env.VITE_APP_API_URL,

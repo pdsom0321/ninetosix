@@ -1,4 +1,5 @@
 import axios from 'axios'
+import loadingModule from './loadingModule'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
@@ -14,6 +15,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    loadingModule.show()
     return config
   },
   (error) => {
@@ -39,6 +41,8 @@ const axiosModule = {
       return Promise.resolve(response.data)
     } catch (error) {
       return Promise.reject(error)
+    } finally {
+      loadingModule.hide()
     }
   }
 }

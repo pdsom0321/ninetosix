@@ -1,27 +1,33 @@
 <script setup>
 import { reactive, watchEffect } from 'vue'
 import { useCompanyStore } from '@/stores/company'
+import lib from '@/util/apiUtil'
+import _ from 'lodash'
 
 const store = useCompanyStore()
 
 const teams = reactive([
-  {
-    id: 1,
-    name: '모바일팀'
-  }
+  // {
+  //   id: 1,
+  //   name: '모바일팀'
+  // }
 ])
 
 watchEffect(() => {
-  console.log('chenge cid', store.compId)
+  if (store.compId) {
+    teams.splice(0)
+    lib
+      .api({
+        url: `/team/${store.compId}`,
+        method: 'get'
+      })
+      .then((res) => {
+        _.merge(teams, res)
+      })
+  }
 })
 
 const addList = reactive([])
-
-defineExpose({
-  loadTeam(teamId) {
-    console.log('teamId : ', teamId)
-  }
-})
 
 const addTeam = (idx) => {
   //샘플, 실제로는 서버에 저장 후 다시 get api 호출해서 데이터 바인딩
