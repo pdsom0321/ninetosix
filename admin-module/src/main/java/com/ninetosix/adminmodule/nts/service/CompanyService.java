@@ -21,18 +21,14 @@ public class CompanyService {
         companyRepository.save(Company.create(name));
     }
 
-    public List<CompanyResDTO> getCompanies() {
-        return companyRepository.findAll().stream()
-                .map(CompanyResDTO::of)
-                .collect(Collectors.toList());
-    }
-
-    public Company getCompany(Long id) {
+    public Company company(Long id) {
         return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    public CompanyResDTO getCompanyResDTO(Long id) {
-        return companyRepository.findById(id).map(CompanyResDTO::of).orElseThrow(NoSuchElementException::new);
+    public List<CompanyResDTO> companies() {
+        return companyRepository.findAll().stream()
+                .map(CompanyResDTO::of)
+                .collect(Collectors.toList());
     }
 
     public void modifyCompany(Long id, String name) {

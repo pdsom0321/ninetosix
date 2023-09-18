@@ -1,6 +1,7 @@
 package com.ninetosix.coremodule.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table
@@ -24,4 +26,11 @@ public class CompanyLocation {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
+
+    public static CompanyLocation create(Company company, Location location) {
+        return CompanyLocation.builder()
+                .company(company)
+                .location(location)
+                .build();
+    }
 }
