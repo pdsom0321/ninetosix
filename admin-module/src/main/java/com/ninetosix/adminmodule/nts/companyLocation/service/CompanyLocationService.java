@@ -1,7 +1,9 @@
-package com.ninetosix.adminmodule.nts.service;
+package com.ninetosix.adminmodule.nts.companyLocation.service;
 
-import com.ninetosix.adminmodule.nts.dto.company.createCompanyLocationReqDTO;
-import com.ninetosix.adminmodule.nts.dto.company.CompanyLocationsResDTO;
+import com.ninetosix.adminmodule.nts.company.service.CompanyService;
+import com.ninetosix.adminmodule.nts.companyLocation.dto.CompanyLocationCreateReqDTO;
+import com.ninetosix.adminmodule.nts.companyLocation.dto.CompanyLocationsResDTO;
+import com.ninetosix.adminmodule.nts.location.service.LocationService;
 import com.ninetosix.coremodule.entity.Company;
 import com.ninetosix.coremodule.entity.CompanyLocation;
 import com.ninetosix.coremodule.entity.Location;
@@ -21,7 +23,7 @@ public class CompanyLocationService {
     private final CompanyService companyService;
     private final LocationService locationService;
 
-    public void createCompanyLocation(createCompanyLocationReqDTO reqDTO) {
+    public void createCompanyLocation(CompanyLocationCreateReqDTO reqDTO) {
         Company company = getCompany(reqDTO.companyId());
         Location location = locationService.location(reqDTO.locationId());
 

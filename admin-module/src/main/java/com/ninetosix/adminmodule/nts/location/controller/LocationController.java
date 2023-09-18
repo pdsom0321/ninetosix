@@ -1,7 +1,8 @@
-package com.ninetosix.adminmodule.nts.controller;
+package com.ninetosix.adminmodule.nts.location.controller;
 
-import com.ninetosix.adminmodule.nts.dto.location.LocationReqDTO;
-import com.ninetosix.adminmodule.nts.service.LocationService;
+import com.ninetosix.adminmodule.nts.location.dto.LocationReqDTO;
+import com.ninetosix.adminmodule.nts.location.dto.LocationResDTO;
+import com.ninetosix.adminmodule.nts.location.service.LocationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,12 @@ public class LocationController {
     public ResponseEntity<Void> createLocation(@RequestBody LocationReqDTO reqDTO) {
         locationService.createLocation(reqDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "위치 목록 조회")
+    @GetMapping("location")
+    public ResponseEntity<List<LocationResDTO>> locations() {
+        return ResponseEntity.ok(locationService.locations());
     }
 
     @ApiOperation(value = "위치 수정")

@@ -1,7 +1,8 @@
-package com.ninetosix.adminmodule.nts.service;
+package com.ninetosix.adminmodule.nts.team.service;
 
-import com.ninetosix.adminmodule.nts.dto.team.TeamReqDTO;
-import com.ninetosix.adminmodule.nts.dto.team.TeamsResDTO;
+import com.ninetosix.adminmodule.nts.company.service.CompanyService;
+import com.ninetosix.adminmodule.nts.team.dto.TeamReqDTO;
+import com.ninetosix.adminmodule.nts.team.dto.TeamsResDTO;
 import com.ninetosix.coremodule.entity.Company;
 import com.ninetosix.coremodule.entity.Team;
 import com.ninetosix.coremodule.repository.TeamRepository;
@@ -21,22 +22,22 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     public void createTeam(TeamReqDTO reqDTO) {
-        Company company = companyService.getCompany(reqDTO.companyId());
+        Company company = companyService.company(reqDTO.companyId());
         teamRepository.save(Team.create(reqDTO.name(), company));
     }
 
-    public List<TeamsResDTO> getTeams(Long companyId) {
+    public List<TeamsResDTO> teams(long companyId) {
         return teamRepository.findAllByCompanyId(companyId).stream()
-                .map(TeamsResDTO::of)
+                .map(team -> new TeamsResDTO(team.getId(), team.getName()))
                 .collect(Collectors.toList());
     }
 
-    public void modifyTeam(Long id, String name) {
+    public void modifyTeam(long id, String name) {
         Team team = teamRepository.findById(id).orElseThrow(NoSuchElementException::new);
         team.modify(name);
     }
 
-    public void deleteTeam(Long id) {
+    public void deleteTeam(long id) {
         teamRepository.deleteById(id);
     }
 

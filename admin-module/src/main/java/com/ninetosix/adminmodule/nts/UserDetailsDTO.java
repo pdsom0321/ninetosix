@@ -1,4 +1,4 @@
-package com.ninetosix.adminmodule.nts.dto;
+package com.ninetosix.adminmodule.nts;
 
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

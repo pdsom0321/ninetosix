@@ -1,7 +1,7 @@
-package com.ninetosix.adminmodule.nts.service;
+package com.ninetosix.adminmodule.nts.location.service;
 
-import com.ninetosix.adminmodule.nts.dto.location.LocationReqDTO;
-import com.ninetosix.adminmodule.nts.dto.location.LocationResDTO;
+import com.ninetosix.adminmodule.nts.location.dto.LocationReqDTO;
+import com.ninetosix.adminmodule.nts.location.dto.LocationResDTO;
 import com.ninetosix.coremodule.entity.Location;
 import com.ninetosix.coremodule.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,11 @@ public class LocationService {
         locationRepository.save(Location.create(reqDTO.name(), reqDTO.latitude(), reqDTO.longitude()));
     }
 
-    public List<LocationResDTO> getLocations() {
+    public Location location(long id) {
+        return locationRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
+    public List<LocationResDTO> locations() {
         return locationRepository.findAll().stream()
                 .map(LocationResDTO::of)
                 .collect(Collectors.toList());

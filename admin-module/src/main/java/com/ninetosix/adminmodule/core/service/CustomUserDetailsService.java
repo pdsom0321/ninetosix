@@ -1,6 +1,6 @@
 package com.ninetosix.adminmodule.core.service;
 
-import com.ninetosix.adminmodule.nts.dto.UserDetailsDTO;
+import com.ninetosix.adminmodule.nts.UserDetailsDTO;
 import com.ninetosix.coremodule.entity.Member;
 import com.ninetosix.coremodule.entity.MemberRole;
 import com.ninetosix.coremodule.repository.MemberRepository;

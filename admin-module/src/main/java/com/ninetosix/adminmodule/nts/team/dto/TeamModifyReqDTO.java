@@ -1,4 +1,4 @@
-package com.ninetosix.adminmodule.nts.dto.team;
+package com.ninetosix.adminmodule.nts.team.dto;
 
 public record TeamModifyReqDTO(String name) {
 }

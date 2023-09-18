@@ -1,6 +1,6 @@
-package com.ninetosix.adminmodule.nts.service;
+package com.ninetosix.adminmodule.nts.company.service;
 
-import com.ninetosix.adminmodule.nts.dto.company.CompanyResDTO;
+import com.ninetosix.adminmodule.nts.company.dto.CompanyResDTO;
 import com.ninetosix.coremodule.entity.Company;
 import com.ninetosix.coremodule.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +21,22 @@ public class CompanyService {
         companyRepository.save(Company.create(name));
     }
 
-    public Company company(Long id) {
+    public Company company(long id) {
         return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     public List<CompanyResDTO> companies() {
         return companyRepository.findAll().stream()
-                .map(CompanyResDTO::of)
+                .map(company -> new CompanyResDTO(company.getId(), company.getName()))
                 .collect(Collectors.toList());
     }
 
-    public void modifyCompany(Long id, String name) {
+    public void modifyCompany(long id, String name) {
         Company company = companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
         company.modify(name);
     }
 
-    public void deleteCompany(Long id) {
+    public void deleteCompany(long id) {
         companyRepository.deleteById(id);
     }
 }

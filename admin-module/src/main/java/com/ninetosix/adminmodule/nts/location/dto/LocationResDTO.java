@@ -1,4 +1,4 @@
-package com.ninetosix.adminmodule.nts.dto.location;
+package com.ninetosix.adminmodule.nts.location.dto;
 
 import com.ninetosix.coremodule.entity.Location;
 
