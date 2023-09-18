@@ -24,7 +24,7 @@ public class CompanyLocationController {
 
     @ApiOperation(value = "회사 별 위치 목록")
     @GetMapping("/company-location/{companyId}")
-    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(@PathVariable Long companyId) {
+    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(@PathVariable long companyId) {
         return ResponseEntity.ok(companyLocationService.companyLocations(companyId));
     }
 }

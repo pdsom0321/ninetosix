@@ -34,7 +34,7 @@ public class CompanyLocationService {
         Company company = getCompany(companyId);
 
         return companyLocationRepository.findByCompany(company).stream()
-                .map(companyLocation -> new CompanyLocationsResDTO(companyLocation.getId(), companyLocation.getLocation().getId()))
+                .map(CompanyLocationsResDTO::of)
                 .collect(Collectors.toList());
     }
 
