@@ -38,6 +38,10 @@ public class CompanyLocationService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteCompanyLocation(long id) {
+        companyLocationRepository.deleteById(id);
+    }
+
     private Company getCompany(long companyId) {
         return companyService.company(companyId);
     }

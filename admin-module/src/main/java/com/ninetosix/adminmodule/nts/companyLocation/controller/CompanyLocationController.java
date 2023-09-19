@@ -27,4 +27,11 @@ public class CompanyLocationController {
     public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(@PathVariable long companyId) {
         return ResponseEntity.ok(companyLocationService.companyLocations(companyId));
     }
+
+    @ApiOperation(value = "회사 와 매핑된 위치 정보 삭제")
+    @DeleteMapping("/company-location/{id}")
+    public ResponseEntity<Void> deleteCompanyLocation(@PathVariable long id) {
+        companyLocationService.deleteCompanyLocation(id);
+        return ResponseEntity.ok().build();
+    }
 }
