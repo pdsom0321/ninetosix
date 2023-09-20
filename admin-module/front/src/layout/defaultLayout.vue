@@ -14,7 +14,10 @@ const mode = ref(false)
     </div>
 
     <div class="card h-100 rounded-0 border-0">
-      <div v-if="route.name" class="card-header py-3 fw-bold">{{ route.name }}</div>
+      <div v-if="route.name" class="card-header py-3">
+        <span>{{ route.matched[0].name }} &gt; </span>
+        <span class="fw-bold">{{ route.name }}</span>
+      </div>
       <div class="card-body h-100">
         <router-view />
       </div>

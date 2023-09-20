@@ -6,59 +6,91 @@ import _ from 'lodash'
 
 const store = useCompanyStore()
 
-const teams = reactive([
-  // {
-  //   id: 1,
-  //   name: '모바일팀'
-  // }
-])
+const teams = reactive([])
+const addList = reactive([])
+
+const teamsAPI = ({ id, method, data }, callback) => {
+  // get, post, put, delete
+  const options = {
+    url: id ? `/team/${id}` : '/team',
+    method: method
+  }
+
+  if (data) options.data = data
+
+  try {
+    lib.api(options).then((res) => {
+      callback(res)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const getTeams = () => {
+  teams.splice(0)
+  const param = {
+    id: store.compId,
+    method: 'get'
+  }
+  teamsAPI(param, (res) => {
+    _.merge(teams, res)
+  })
+}
 
 watchEffect(() => {
   if (store.compId) {
     teams.splice(0)
-    lib
-      .api({
-        url: `/team/${store.compId}`,
-        method: 'get'
-      })
-      .then((res) => {
-        _.merge(teams, res)
-      })
+    addList.splice(0)
+    getTeams()
   }
 })
 
-const addList = reactive([])
-
 const addTeam = (idx) => {
-  //샘플, 실제로는 서버에 저장 후 다시 get api 호출해서 데이터 바인딩
-  teams.push(addList[idx])
-  addList.splice(idx, 1)
+  const param = {
+    method: 'post',
+    data: {
+      name: addList[idx].name,
+      companyId: store.compId
+    }
+  }
+
+  teamsAPI(param, () => {
+    addList.splice(idx, 1)
+    getTeams()
+  })
 }
 
 const saveTeam = (idx) => {
-  teams[idx].editMode = false
-}
+  // teams[idx].editMode = false
+  const param = {
+    id: teams[idx].id,
+    method: 'put',
+    data: {
+      name: teams[idx].name
+    }
+  }
 
-const editTeam = (idx) => {
-  teams[idx].editMode = true
+  teamsAPI(param, () => {
+    getTeams()
+  })
 }
 
 const delTeam = (idx) => {
   if (confirm('정말 삭제하시겠습니까?')) {
-    //삭제로직
-    console.log(idx)
-    teams.splice(idx, 1)
+    const param = {
+      id: teams[idx].id,
+      method: 'delete'
+    }
+
+    teamsAPI(param, () => {
+      getTeams()
+    })
   }
 }
 </script>
 
 <template>
-  compId : {{ store.compId }}
-  <!-- <div class="w-100 bg-danger">
-    <button class="sticky-top btn btn-sm btn-outline-secondary" @click="addList.push({})">
-      추가
-    </button>
-  </div> -->
   <table class="table table-bordered table-hover text-center align-middle">
     <colgroup>
       <col />
@@ -68,7 +100,13 @@ const delTeam = (idx) => {
     <thead>
       <tr class="border-0">
         <th class="text-end border-0" colspan="100">
-          <button class="btn btn-sm btn-outline-secondary" @click="addList.push({})">추가</button>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="addList.push({})"
+            :disabled="!store.compId"
+          >
+            추가
+          </button>
         </th>
       </tr>
       <tr>
@@ -77,7 +115,7 @@ const delTeam = (idx) => {
         <!-- <th></th> -->
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="store.compId">
       <tr v-for="(team, index) in teams">
         <td>{{ team.id }}</td>
         <td>
@@ -92,7 +130,7 @@ const delTeam = (idx) => {
             <button
               v-if="!team.editMode"
               class="btn btn-sm btn-outline-secondary rounded-0"
-              @click="editTeam(index)"
+              @click="team.editMode = true"
             >
               수정
             </button>
@@ -121,5 +159,11 @@ const delTeam = (idx) => {
         </td>
       </tr>
     </tbody>
+    <tbody v-else>
+      <tr>
+        <td colspan="100">회사를 선택해주세요</td>
+      </tr>
+    </tbody>
+    <tbody></tbody>
   </table>
 </template>

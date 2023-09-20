@@ -11,12 +11,9 @@ const routes = [
         component: () => import('@/views/company/index.vue')
       },
       {
-        path: 'company-locations',
-        name: '회사위치관리'
-      },
-      {
-        path: 'teams',
-        name: '팀관리'
+        path: 'locations',
+        name: '위치관리',
+        component: () => import('@/views/company/locations.vue')
       }
     ],
     meta: {

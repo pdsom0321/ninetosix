@@ -1,7 +1,7 @@
 <script setup>
 import company from './company.vue'
 import team from './team.vue'
-import location from './location.vue'
+import location from './company-locations.vue'
 </script>
 
 <template>

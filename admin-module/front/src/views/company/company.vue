@@ -34,8 +34,19 @@ const addList = reactive([])
 
 const addComp = (idx) => {
   //샘플, 실제로는 서버에 저장 후 다시 get api 호출해서 데이터 바인딩
-  companyies.push(addList[idx])
-  addList.splice(idx, 1)
+  // companyies.push(addList[idx])
+  lib
+    .api({
+      url: '/company',
+      method: 'post',
+      data: {
+        name: addList[idx].name
+      }
+    })
+    .then(() => {
+      addList.splice(idx, 1)
+      getCompanies()
+    })
 }
 
 const saveComp = (idx) => {

@@ -9,7 +9,26 @@ const routes = [
       {
         path: 'notice',
         name: '공지사항',
-        component: () => import('@/views/contents/notice.vue')
+        component: () => import('@/views/contents/notice.vue'),
+        meta: {
+          type: '01'
+        }
+      },
+      {
+        path: 'privacy',
+        name: '개인정보처리방침',
+        // component: () => import('@/views/contents/notice.vue'),
+        meta: {
+          type: '02'
+        }
+      },
+      {
+        path: 'terms',
+        name: '이용약관',
+        // component: () => import('@/views/contents/notice.vue'),
+        meta: {
+          type: '03'
+        }
       }
     ],
     meta: {
