@@ -28,6 +28,7 @@ const locationsAPI = ({ id, method, data }, callback) => {
 }
 
 const getLocations = () => {
+  locations.splice(0)
   const param = {
     id: store.compId,
     method: 'get'
@@ -39,7 +40,6 @@ const getLocations = () => {
 
 watchEffect(() => {
   if (store.compId) {
-    locations.splice(0)
     getLocations()
   }
 })
@@ -47,8 +47,13 @@ watchEffect(() => {
 const delLocation = (idx) => {
   if (confirm('정말 삭제하시겠습니까?')) {
     //삭제로직
-    console.log(idx)
-    locations.splice(idx, 1)
+    const param = {
+      id: locations[idx].id,
+      method: 'delete'
+    }
+    locationsAPI(param, (res) => {
+      getLocations()
+    })
   }
 }
 
