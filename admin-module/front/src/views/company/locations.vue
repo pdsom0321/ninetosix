@@ -115,6 +115,10 @@ const addCompanyLocation = (idx) => {
     })
 }
 
+const setSearch = (event) => {
+  search.value = event.target.value
+}
+
 ;(() => {
   getLocations()
 })()
@@ -124,7 +128,7 @@ const addCompanyLocation = (idx) => {
   <div class="text-center h-100">
     <div class="card h-100">
       <div class="card-header">
-        <input type="text" class="form-control" placeholder="위치명 검색" v-model="search" />
+        <input type="text" class="form-control" placeholder="위치명 검색" @input="setSearch" />
       </div>
       <!-- <div class="card-header text-end">
         <button class="btn btn-sm btn-outline-secondary">추가</button>
