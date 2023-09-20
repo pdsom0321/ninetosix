@@ -22,7 +22,7 @@ public class LocationController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "위치 목록 조회")
+    @ApiOperation(value = "위치 목록")
     @GetMapping("location")
     public ResponseEntity<List<LocationResDTO>> locations() {
         return ResponseEntity.ok(locationService.locations());
