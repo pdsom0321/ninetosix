@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +33,7 @@ public class TeamService {
     }
 
     public void modifyTeam(long id, String name) {
-        Team team = teamRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        Team team = teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         team.modify(name);
     }
 
