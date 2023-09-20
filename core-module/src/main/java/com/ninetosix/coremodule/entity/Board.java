@@ -1,13 +1,19 @@
 package com.ninetosix.coremodule.entity;
 
+import com.ninetosix.coremodule.vo.BoardType;
 import com.ninetosix.coremodule.vo.YNCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table
 public class Board {
 
@@ -16,16 +22,17 @@ public class Board {
     @Column(name = "board_id")
     private Long id;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private BoardType type;
 
     private String title;
 
     @Lob
     private String content;
 
-    private LocalDateTime startDate;
+    private String startDate;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
@@ -34,4 +41,25 @@ public class Board {
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private YNCode deleteYn;
+
+    public static Board create(BoardType type, String title, String content, String startDate, String endDate, YNCode useYn, YNCode deleteYn) {
+        return Board.builder()
+                .type(type)
+                .title(title)
+                .content(content)
+                .startDate(startDate)
+                .endDate(endDate)
+                .useYn(useYn)
+                .deleteYn(deleteYn)
+                .build();
+    }
+
+    public void modify(String title, String content, String startDate, String endDate, YNCode useYn, YNCode deleteYn) {
+        this.title = title;
+        this.content = content;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.useYn = useYn;
+        this.deleteYn = deleteYn;
+    }
 }
