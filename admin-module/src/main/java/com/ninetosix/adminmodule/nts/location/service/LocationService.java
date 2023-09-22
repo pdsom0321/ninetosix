@@ -29,11 +29,10 @@ public class LocationService {
     }
 
     public List<LocationResDTO> locations() {
-        return locationRepository.findAll().stream()
-                .map(location -> {
-                    List<CompanyResDTO> companyList = location.getCompanyLocations().stream().map(CompanyLocation::getCompany).map(CompanyResDTO::of).collect(Collectors.toList());
-                    return new LocationResDTO(location.getId(), location.getName(), location.getLatitude(), location.getLongitude(), companyList);
-                })
+        List<Location> locations = locationRepository.findAll();
+
+        return locations.stream()
+                .map(this::getLocationResDTO)
                 .collect(Collectors.toList());
     }
 
@@ -44,5 +43,20 @@ public class LocationService {
 
     public void deleteLocation(long id) {
         locationRepository.deleteById(id);
+    }
+
+    private LocationResDTO getLocationResDTO(Location location) {
+        List<CompanyResDTO> companyList = location.getCompanyLocations().stream()
+                .map(CompanyLocation::getCompany)
+                .map(CompanyResDTO::of)
+                .collect(Collectors.toList());
+
+        return new LocationResDTO(
+                location.getId(),
+                location.getName(),
+                location.getLatitude(),
+                location.getLongitude(),
+                companyList
+        );
     }
 }
