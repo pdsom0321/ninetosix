@@ -9,6 +9,8 @@ import com.ninetosix.coremodule.repository.BoardRepository;
 import com.ninetosix.coremodule.vo.BoardType;
 import com.ninetosix.coremodule.vo.YNCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +28,14 @@ public class BoardService {
         boardRepository.save(Board.create(BoardType.valueOf(type), reqDTO.title(), reqDTO.content(), reqDTO.startDate(), reqDTO.endDate(), reqDTO.useYn(), reqDTO.deleteYn()));
     }
 
-    public List<BoardsResDTO> boards(String type) {
-        return boardRepository.findAllByType(BoardType.valueOf(type)).stream()
+    public List<BoardsResDTO> boards(String type, Pageable pageable) {
+        return boardRepository.findAllByType(BoardType.valueOf(type), pageable).stream()
+                .map(BoardsResDTO::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<BoardsResDTO> boardsWithKeyword(String type, String keyword, Pageable pageable) {
+        return boardRepository.findAllByTypeAndTitleContaining(BoardType.valueOf(type), keyword, pageable).stream()
                 .map(BoardsResDTO::of)
                 .collect(Collectors.toList());
     }

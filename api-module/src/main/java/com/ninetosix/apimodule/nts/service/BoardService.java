@@ -25,8 +25,9 @@ public class BoardService {
     }
 
     public List<BoardsResDTO> boards(String type) {
-        return boardRepository.findAllByType(BoardType.valueOf(type)).stream()
+        return null;
+        /*return boardRepository.findAllByType(BoardType.valueOf(type)).stream()
                 .map(BoardsResDTO::of)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 }
