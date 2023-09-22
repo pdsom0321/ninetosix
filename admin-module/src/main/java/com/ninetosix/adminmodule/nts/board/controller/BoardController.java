@@ -30,7 +30,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.boards(type));
     }
 
-    @ApiOperation(value = "게시글 상세 목록")
+    @ApiOperation(value = "게시글 상세 정보")
     @GetMapping("board/{type}/{id}")
     public ResponseEntity<BoardResDTO> board(@PathVariable String type, @PathVariable long id) {
         return ResponseEntity.ok(boardService.board(type, id));
