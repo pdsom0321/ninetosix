@@ -1,16 +1,89 @@
 <script setup>
-import { ref } from 'vue'
-import editor from '@/components/editor.vue'
+import { reactive } from 'vue'
+import lib from '@/util/apiUtil'
+import popupModule from '@/util/popupModule'
+import { useRoute } from 'vue-router'
+import _ from 'lodash'
 
-const contents = ref(
-  '<p><strong>안녕하세요. 0918 관리자 입니다.</strong></p><p>0918은 현재 베타 버전으로 서비스 중에 있으며 다음과 같은 서비스를 개발하고 있습니다.</p><ul><li><p>출퇴근 등록</p></li><li><p>출퇴근 기록</p></li><li><p>휴가 등록</p></li><li><p>내 정보</p></li></ul><p>추가 기능은 개발을 마치고 서비스 적용 시 즉시 공지하여 드리겠습니다.</p><p>감사합니다.</p>'
-)
+const boardList = reactive([])
+const route = useRoute()
 
-const saveContents = (val) => {
-  contents.value = val
+const getBoardList = () => {
+  lib
+    .api({
+      url: `/board/${route.meta?.type}`,
+      method: 'get'
+    })
+    .then((res) => {
+      boardList.splice(0)
+      _.merge(boardList, res)
+    })
 }
+
+const openPopup = (id) => {
+  popupModule
+    .popup({
+      component: import('@/views/contents/noticeDtl.vue'),
+      data: {
+        id: id,
+        type: route.meta?.type
+      }
+    })
+    .ok(() => {
+      getBoardList()
+    })
+}
+
+;(() => {
+  getBoardList()
+})()
 </script>
 
 <template>
-  <editor :contents="contents" @update:contents="saveContents" />
+  <div class="card h-100">
+    <div class="card-header">
+      <div class="input-group">
+        <input type="text" class="form-control" />
+        <button class="btn btn-outline-secondary">검색</button>
+      </div>
+    </div>
+    <div class="card-body overflow-auto">
+      <table class="table table-hover text-center align-middle">
+        <colgroup>
+          <col width="*" />
+          <col width="40%" />
+          <col width="*" />
+          <col width="*" />
+          <col width="*" />
+          <col width="*" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="text-start">제목</th>
+            <th>게시시작일</th>
+            <th>게시종료일</th>
+            <th>노출여부</th>
+            <th>삭제여부</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(item, index) in boardList"
+            @click="openPopup(item.id)"
+            style="cursor: pointer"
+          >
+            <td>{{ item.id }}</td>
+            <td class="text-start">
+              {{ item.title }}
+            </td>
+            <td>{{ item.startDate }}</td>
+            <td>{{ item.endDate }}</td>
+            <td>{{ item.useYn }}</td>
+            <td>{{ item.deleteYn }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>

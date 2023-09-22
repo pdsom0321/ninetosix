@@ -18,7 +18,7 @@ const mode = ref(false)
         <span>{{ route.matched[0].name }} &gt; </span>
         <span class="fw-bold">{{ route.name }}</span>
       </div>
-      <div class="card-body h-100">
+      <div class="card-body h-100 container">
         <router-view />
       </div>
     </div>

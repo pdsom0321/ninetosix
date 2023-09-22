@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import lib from '@/util/apiUtil'
 import { useCompanyStore } from '@/stores/company'
 import _ from 'lodash'
@@ -7,11 +7,10 @@ import _ from 'lodash'
 const store = useCompanyStore()
 
 const props = defineProps({
-  isModal: {
-    type: Boolean
+  data: {
+    type: Object
   }
 })
-
 const search = ref('')
 const locations = reactive([])
 const addList = reactive([])
@@ -37,15 +36,58 @@ const getLocations = () => {
   }
 
   locationAPI(param, (res) => {
-    _.merge(
-      locations,
-      res.map((obj) => {
-        return {
-          ...obj,
-          companies: obj.companyList.length
-        }
+    let a = res.map((obj) => {
+      return {
+        ...obj,
+        companies: obj.companyList.length
+      }
+    })
+
+    //해당 회사에 등록된 경우
+    let b = a
+      .filter((x) => {
+        return x.companyList.findIndex((x) => x.id === store.compId) > -1
       })
-    )
+      .sort((a, b) => {
+        //id 기준
+        // return a.id - b.id
+
+        //name 기준
+        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+      })
+
+    //해당 회사에 등록되지 않은 경우
+    let c = a
+      .filter((x) => {
+        return x.companyList.findIndex((x) => x.id === store.compId) == -1
+      })
+      .sort((a, b) => {
+        //id 기준
+        // return a.id - b.id
+
+        //name 기준
+        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+      })
+
+    _.merge(locations, [...b, ...c])
+
+    // _.merge(
+    //   locations,
+    //   res
+    //     .map((obj) => {
+    //       return {
+    //         ...obj,
+    //         companies: obj.companyList.length
+    //       }
+    //     })
+    //     .sort((a, b) => {
+    //       return a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+    //     })
+    //     .sort((s) => {
+    //       return s.companyList.findIndex((x) => x.id === store.compId)
+    //     })
+    //     .toReversed()
+    // )
   })
 }
 
@@ -126,9 +168,9 @@ const setSearch = (event) => {
 
 <template>
   <div class="text-center h-100">
-    <div class="card h-100">
+    <div class="card h-100 rounded-0">
       <div class="card-header">
-        <input type="text" class="form-control" placeholder="위치명 검색" @input="setSearch" />
+        <input type="text" class="form-control" placeholder="위치 검색" @input="setSearch" />
       </div>
       <!-- <div class="card-header text-end">
         <button class="btn btn-sm btn-outline-secondary">추가</button>
@@ -158,7 +200,7 @@ const setSearch = (event) => {
               <th>위치명</th>
               <th>위도</th>
               <th>경도</th>
-              <th v-if="!props.isModal">매핑된 회사 수</th>
+              <th v-if="!props.data?.isModal">매핑된 회사 수</th>
               <th colspan="100"></th>
             </tr>
           </thead>
@@ -194,11 +236,11 @@ const setSearch = (event) => {
                 />
               </td>
               <td>
-                <button class="text-primary border-0 bg-transparent" v-if="!props.isModal">
+                <button class="text-primary border-0 bg-transparent" v-if="!props.data?.isModal">
                   {{ location.companies }}
                 </button>
               </td>
-              <td v-if="!props.isModal">
+              <td v-if="!props.data?.isModal">
                 <div class="btn-group" v-if="!location.editMode">
                   <button
                     class="btn btn-sm btn-outline-secondary"
@@ -215,15 +257,15 @@ const setSearch = (event) => {
                 </button>
               </td>
               <td v-else>
-                <button
-                  @click="addCompanyLocation(index)"
-                  :disabled="location.companyList.findIndex((x) => x.id === store.compId) > -1"
-                  class="btn btn-sm btn-outline-secondary"
+                <span v-if="location.companyList.findIndex((x) => x.id === store.compId) > -1"
+                  ><img src="@/assets/image/icon/accept.png" /><!--등록 됨--></span
                 >
-                  <span v-if="location.companyList.findIndex((x) => x.id === store.compId) > -1"
-                    >등록 됨</span
-                  >
-                  <span v-else>추가</span>
+                <button
+                  v-else
+                  @click="addCompanyLocation(index)"
+                  class="btn btn-sm btn-outline-secondary fw-bold"
+                >
+                  <span class="fw-bold">+</span>
                 </button>
               </td>
             </tr>
@@ -238,8 +280,8 @@ const setSearch = (event) => {
               <td>
                 <input class="form-control" type="text" v-model="item.longitude" />
               </td>
-              <td v-if="!props.isModal">-</td>
-              <td>
+              <td v-if="!props.data?.isModal">-</td>
+              <td colspan="100">
                 <button class="btn btn-sm btn-outline-success" @click="addLocation(index)">
                   저장
                 </button>

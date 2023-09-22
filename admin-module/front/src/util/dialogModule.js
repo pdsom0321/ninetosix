@@ -21,6 +21,7 @@ const dialogModule = {
       return
     }
     vueApp.hide()
+    app.unmount()
   }
 }
 

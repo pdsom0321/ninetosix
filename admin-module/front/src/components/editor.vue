@@ -23,7 +23,7 @@ onMounted(() => {
     height: '500px',
     //'wysiwyg', 'markdown' 택 1
     initialEditType: 'wysiwyg',
-    initialValue: props.contents,
+    initialValue: props.contents.toString(),
     hideModeSwitch: true,
     events: {
       change: () => emit('update:contents', editorValid.value.getHTML())
@@ -38,6 +38,7 @@ onMounted(() => {
 </script>
 
 <template>
+  {{ props.contents }}
   <!-- // ref사용하여 에디터 value 적용 -->
   <div ref="editor"></div>
   <!-- //작성한 내용 불러와서 html 적용 -->

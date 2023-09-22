@@ -11,7 +11,7 @@ const routes = [
         name: '공지사항',
         component: () => import('@/views/contents/notice.vue'),
         meta: {
-          type: '01'
+          type: 'NOTICE'
         }
       },
       {
@@ -19,7 +19,7 @@ const routes = [
         name: '개인정보처리방침',
         // component: () => import('@/views/contents/notice.vue'),
         meta: {
-          type: '02'
+          type: 'PRIVACY'
         }
       },
       {
@@ -27,7 +27,7 @@ const routes = [
         name: '이용약관',
         // component: () => import('@/views/contents/notice.vue'),
         meta: {
-          type: '03'
+          type: 'TERMS'
         }
       }
     ],

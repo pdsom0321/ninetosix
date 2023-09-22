@@ -70,14 +70,14 @@ defineExpose({
         <div class="modal-body p-0">
           <bodyComponenent :isModal="true" @modalOk="modalOk" />
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn btn-primary text-center" @click="emit('modalok')">
             추가
           </button>
           <button type="button" class="btn btn-secondary text-center" data-bs-dismiss="modal">
             닫기
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

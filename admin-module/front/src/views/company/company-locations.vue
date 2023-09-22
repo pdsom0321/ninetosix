@@ -3,7 +3,7 @@ import { reactive, watchEffect } from 'vue'
 import { useCompanyStore } from '@/stores/company'
 import lib from '@/util/apiUtil'
 import _ from 'lodash'
-
+import popupModule from '@/util/popupModule'
 import dialogModule from '@/util/dialogModule'
 
 const store = useCompanyStore()
@@ -57,12 +57,18 @@ const delLocation = (idx) => {
   }
 }
 
-const modalOk = (res) => {
-  alert(res)
-}
-
 const openModal = () => {
-  dialogModule.show()
+  // dialogModule.show()
+  popupModule
+    .popup({
+      component: import('@/views/company/locations.vue'),
+      data: {
+        isModal: true
+      }
+    })
+    .ok((data) => {
+      console.log(data)
+    })
 }
 </script>
 
