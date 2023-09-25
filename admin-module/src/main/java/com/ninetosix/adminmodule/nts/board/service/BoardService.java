@@ -9,7 +9,6 @@ import com.ninetosix.coremodule.repository.BoardRepository;
 import com.ninetosix.coremodule.vo.BoardType;
 import com.ninetosix.coremodule.vo.YNCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
