@@ -19,7 +19,7 @@ const mode = ref(false)
         <span class="fw-bold">{{ route.name }}</span>
       </div>
       <div class="card-body h-100 container">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </div>
     </div>
   </div>

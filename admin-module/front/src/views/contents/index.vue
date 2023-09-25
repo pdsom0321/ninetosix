@@ -21,13 +21,16 @@ const getBoardList = () => {
 }
 
 const openPopup = (id) => {
+  let data = {
+    type: route.meta?.type
+  }
+
+  if (id) data.id = id
+
   popupModule
     .popup({
-      component: import('@/views/contents/noticeDtl.vue'),
-      data: {
-        id: id,
-        type: route.meta?.type
-      }
+      component: import('@/views/contents/detail.vue'),
+      data: data
     })
     .ok(() => {
       getBoardList()
@@ -35,6 +38,10 @@ const openPopup = (id) => {
 }
 
 ;(() => {
+  //검색기능 추가
+  //등록기능 추가
+  //페이징처리 추가
+  console.log('test')
   getBoardList()
 })()
 </script>
@@ -84,6 +91,9 @@ const openPopup = (id) => {
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="card-footer text-end">
+      <button class="btn btn-success" @click="openPopup(null)">등록</button>
     </div>
   </div>
 </template>

@@ -9,7 +9,7 @@ const routes = [
       {
         path: 'notice',
         name: '공지사항',
-        component: () => import('@/views/contents/notice.vue'),
+        component: () => import('@/views/contents/index.vue'),
         meta: {
           type: 'NOTICE'
         }
@@ -17,7 +17,7 @@ const routes = [
       {
         path: 'privacy',
         name: '개인정보처리방침',
-        // component: () => import('@/views/contents/notice.vue'),
+        component: () => import('@/views/contents/index.vue'),
         meta: {
           type: 'PRIVACY'
         }
@@ -25,7 +25,7 @@ const routes = [
       {
         path: 'terms',
         name: '이용약관',
-        // component: () => import('@/views/contents/notice.vue'),
+        component: () => import('@/views/contents/index.vue'),
         meta: {
           type: 'TERMS'
         }
