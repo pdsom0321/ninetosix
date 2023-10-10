@@ -1,5 +1,11 @@
 package com.ninetosix.apimodule.nts.service;
 
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import org.springframework.beans.factory.annotation.Value;
 import com.ninetosix.apimodule.core.jwt.MemberContext;
 import com.ninetosix.apimodule.nts.dto.attend.*;
 import com.ninetosix.coremodule.entity.Attend;
@@ -10,7 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -22,6 +33,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,6 +42,12 @@ import java.util.stream.IntStream;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final MemberService memberService;
+
+    @Value("${server.doc-path}")
+    private String docPath;
+
+//    private int startRow = 6;
+//    private int startCol = 2;
 
     public void onWork(OnWorkReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
@@ -144,5 +163,79 @@ public class AttendService {
 
     private String getCurrentTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+    }
+
+    public void exportPOI(int year, int month, Long teamId, HttpServletResponse response) {
+        try {
+            //엑셀 템플릿 로드
+            FileInputStream file = new FileInputStream(new File(docPath + "/form1.xlsx"));
+            XSSFWorkbook wb = new XSSFWorkbook(file);
+            XSSFSheet workSheet = wb.getSheetAt(0);
+
+            //해당 팀원 정보, 해당 월 날짜 정보
+            List<ExportDTO> memberList = getAttends(year,month,teamId);
+            List<Integer> dates = getDayOfMonth(year, month);
+
+            workSheet.getRow(1).getCell(0).setCellValue(String.format("%02d",month) + "월 출근부");
+
+            int row = 6;
+            int col = 2;
+
+            for(ExportDTO member : memberList) {
+
+                //팀원이 6명이 넘어갈 경우 가로로 쭉 길어짐
+                //6명 이후에는 새로 시트를 따서 새 폼으로 작성할 것
+                //템플릿 불러오거나 새 시트 따는 부분을 별도 메소드로 분리 필요해보임
+
+                //팀원 이름 셋팅
+                workSheet.getRow(row).getCell(col).setCellValue(member.memberName());
+
+                row = 8;
+
+                for(int day : dates){
+
+                    /*
+                        if 주말? (공휴일도 제외할 수 있음 good)
+                            row ~ row+2 색 회색
+                    */
+
+                    for(AttendDTO attend : member.attends()){
+                        if(Integer.valueOf(attend.attendDate()).equals(day)){
+                            //출근시간
+                            workSheet.getRow(row).getCell(col).setCellValue(attend.inTime().substring(0,2));
+                            workSheet.getRow(row).getCell(col+1).setCellValue(attend.inTime().substring(2,4));
+
+                            //퇴근시간
+                            workSheet.getRow(row+1).getCell(col).setCellValue(attend.outTime().substring(0,2));
+                            workSheet.getRow(row+1).getCell(col+1).setCellValue(attend.outTime().substring(2,4));
+
+                            //근무시간 계
+                            workSheet.getRow(row+2).getCell(col).setCellValue(String.format("%02d",Math.floorDiv(attend.workTime(),60)));
+                            workSheet.getRow(row+2).getCell(col+1).setCellValue(String.format("%02d",Math.floorMod(attend.workTime(),60)));
+                        }
+                    }
+                    row += 3;
+                }
+
+                row = 6;
+                col += 3;
+            }
+
+            //현재 row부터 103행까지 deleteRow
+
+            String fileName = "[NineToSix] " + year + "년 " + month + "월 출근부";
+
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+            response.setHeader("Content-Disposition", "attachment;filename=\""+
+                    new String(fileName.getBytes("euc-kr"),"8859_1")+".xlsx\"");
+
+            wb.write(response.getOutputStream());
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

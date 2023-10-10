@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Slf4j
@@ -81,5 +82,15 @@ public class AttendController {
         mv.addObject("dates", attendService.getDayOfMonth(year, month));
         mv.addObject("attends", attendService.getAttends(year, month, teamId));
         return mv;
+    }
+
+    @ApiOperation(value = "엑셀(POI) 다운로드")
+    @GetMapping("attend/export-excel/{teamId}/{year}/{month}")
+    public void exportAttendanceToPOI(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId, HttpServletResponse response) {
+//        try {
+            attendService.exportPOI(year,month,teamId, response);
+//        } catch (Exception e){
+//            System.out.println("error");
+//        }
     }
 }
