@@ -20,10 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -169,11 +169,11 @@ public class MemberService {
     }
 
     public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 계정 입니다."));
+        return memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Member not found with email: " + email));
     }
 
     public Member findById(Long id) {
-        return memberRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     public List<Member> findAllByTeamId(Long teamId) {

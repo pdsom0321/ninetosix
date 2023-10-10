@@ -1,7 +1,5 @@
 package com.ninetosix.apimodule.nts.service;
 
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -16,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -28,12 +27,9 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-
 
 @Slf4j
 @Service
@@ -60,7 +56,7 @@ public class AttendService {
         Long memberId = MemberContext.getMemberId();
 
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
 
         attend.updateInTimeAndLocationId(getCurrentTime(), reqDTO.locationId());
     }
@@ -69,7 +65,7 @@ public class AttendService {
         Long memberId = MemberContext.getMemberId();
 
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
 
         attend.updateOutTimeAndWorkTime(getCurrentTime());
     }
@@ -94,7 +90,7 @@ public class AttendService {
         Long memberId = MemberContext.getMemberId();
 
         Attend attend = attendRepository.findByAttendDateAndMemberId(day, memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
 
         Optional.ofNullable(attend.getInTime())
                 .ifPresentOrElse(o -> attend.updateCode(AttendCode.DAY.getAttendCode()),
