@@ -77,20 +77,16 @@ public class AttendController {
 
     @ApiOperation(value = "엑셀 출력 (팀 단위)")
     @GetMapping("attend/export/{teamId}/{year}/{month}")
-    public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId) {
+    public ModelAndView exportAttendance(@PathVariable long teamId, @PathVariable int year, @PathVariable int month) {
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", attendService.getDayOfMonth(year, month));
-        mv.addObject("attends", attendService.getAttends(year, month, teamId));
+        mv.addObject("attends", attendService.getAttends(teamId, year, month));
         return mv;
     }
 
-    @ApiOperation(value = "엑셀(POI) 다운로드")
-    @GetMapping("attend/export-excel/{teamId}/{year}/{month}")
-    public void exportAttendanceToPOI(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId, HttpServletResponse response) {
-//        try {
-            attendService.exportPOI(year,month,teamId, response);
-//        } catch (Exception e){
-//            System.out.println("error");
-//        }
+    @ApiOperation(value = "출근부 엑셀 다운로드")
+    @GetMapping("attend/excel/{teamId}/{year}/{month}")
+    public void downloadExcel(HttpServletResponse response, @PathVariable long teamId, @PathVariable int year, @PathVariable int month) {
+        attendService.downloadExcel(response, teamId, year, month);
     }
 }

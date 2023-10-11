@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,9 +39,6 @@ public class AttendService {
 
     @Value("${server.doc-path}")
     private String docPath;
-
-//    private int startRow = 6;
-//    private int startCol = 2;
 
     public void onWork(OnWorkReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
@@ -137,7 +132,7 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExportDTO> getAttends(int year, int month, Long teamId) {
+    public List<ExportDTO> getAttends(long teamId, int year, int month) {
         return memberService.findAllByTeamId(teamId).stream()
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
@@ -153,85 +148,77 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
+    // TODO : 팀원 6명 이상일 경우 다음 sheet로 넘어가도록 대응, 주말/공휴일인 경우 배경색 회색 처리
+    public void downloadExcel(HttpServletResponse response, long teamId, int year, int month) {
+        List<ExportDTO> memberList = getAttends(teamId, year, month);
+        List<Integer> dates = getDayOfMonth(year, month);
+
+        String templateFileName = "form1.xlsx";
+        try (FileInputStream file = new FileInputStream(docPath + templateFileName);
+             XSSFWorkbook wb = new XSSFWorkbook(file)) {
+
+            XSSFSheet workSheet = wb.getSheetAt(0);
+            workSheet.getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
+
+            // 템플릿 내의 이름, 출근시간, 퇴근시간, 근무시간 데이터 셋팅
+            int nameRow = 6;
+            int row = 8;
+            int col = 2;
+            for (ExportDTO member : memberList) {
+                //팀원 이름 셋팅
+                workSheet.getRow(nameRow).getCell(col).setCellValue(member.memberName());
+
+                for (int day : dates) {
+                    for (AttendDTO attend : member.attends()) {
+                        if (Integer.valueOf(attend.attendDate()).equals(day)) {
+                            setCellValue(workSheet, row, col, attend.inTime());
+                            setCellValue(workSheet, row + 1, col, attend.outTime());
+                            setWorkTimeCellValue(workSheet, row + 2, col, attend.workTime());
+                        }
+                    }
+                    // 다음 멤버(한명당 3개 행 차지)
+                    row += 3;
+                }
+                row = 8;
+                col += 3;
+            }
+
+            String fileName = "[NineToSix] " + year + "년 " + month + "월 출근부";
+
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" +
+                    new String(fileName.getBytes("euc-kr"), "8859_1") + ".xlsx\"");
+
+            wb.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setCellValue(XSSFSheet workSheet, int row, int col, String time) {
+        if (time != null) {
+            int hour = Integer.parseInt(time.substring(0, 2));
+            int minute = Integer.parseInt(time.substring(2, 4));
+            workSheet.getRow(row).getCell(col).setCellValue(hour);
+            workSheet.getRow(row).getCell(col + 1).setCellValue(minute);
+        }
+    }
+
+    private void setWorkTimeCellValue(XSSFSheet workSheet, int row, int col, Long workTime) {
+        if(workTime != null) {
+            long hours = Math.floorDiv(workTime, 60);
+            long minutes = Math.floorMod(workTime, 60);
+            workSheet.getRow(row).getCell(col).setCellValue(String.format("%02d", hours));
+            workSheet.getRow(row).getCell(col + 1).setCellValue(String.format("%02d", minutes));
+        }
+    }
+
     private String getCurrentDate() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
     private String getCurrentTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
-    }
-
-    public void exportPOI(int year, int month, Long teamId, HttpServletResponse response) {
-        try {
-            //엑셀 템플릿 로드
-            FileInputStream file = new FileInputStream(new File(docPath + "/form1.xlsx"));
-            XSSFWorkbook wb = new XSSFWorkbook(file);
-            XSSFSheet workSheet = wb.getSheetAt(0);
-
-            //해당 팀원 정보, 해당 월 날짜 정보
-            List<ExportDTO> memberList = getAttends(year,month,teamId);
-            List<Integer> dates = getDayOfMonth(year, month);
-
-            workSheet.getRow(1).getCell(0).setCellValue(String.format("%02d",month) + "월 출근부");
-
-            int row = 6;
-            int col = 2;
-
-            for(ExportDTO member : memberList) {
-
-                //팀원이 6명이 넘어갈 경우 가로로 쭉 길어짐
-                //6명 이후에는 새로 시트를 따서 새 폼으로 작성할 것
-                //템플릿 불러오거나 새 시트 따는 부분을 별도 메소드로 분리 필요해보임
-
-                //팀원 이름 셋팅
-                workSheet.getRow(row).getCell(col).setCellValue(member.memberName());
-
-                row = 8;
-
-                for(int day : dates){
-
-                    /*
-                        if 주말? (공휴일도 제외할 수 있음 good)
-                            row ~ row+2 색 회색
-                    */
-
-                    for(AttendDTO attend : member.attends()){
-                        if(Integer.valueOf(attend.attendDate()).equals(day)){
-                            //출근시간
-                            workSheet.getRow(row).getCell(col).setCellValue(attend.inTime().substring(0,2));
-                            workSheet.getRow(row).getCell(col+1).setCellValue(attend.inTime().substring(2,4));
-
-                            //퇴근시간
-                            workSheet.getRow(row+1).getCell(col).setCellValue(attend.outTime().substring(0,2));
-                            workSheet.getRow(row+1).getCell(col+1).setCellValue(attend.outTime().substring(2,4));
-
-                            //근무시간 계
-                            workSheet.getRow(row+2).getCell(col).setCellValue(String.format("%02d",Math.floorDiv(attend.workTime(),60)));
-                            workSheet.getRow(row+2).getCell(col+1).setCellValue(String.format("%02d",Math.floorMod(attend.workTime(),60)));
-                        }
-                    }
-                    row += 3;
-                }
-
-                row = 6;
-                col += 3;
-            }
-
-            //현재 row부터 103행까지 deleteRow
-
-            String fileName = "[NineToSix] " + year + "년 " + month + "월 출근부";
-
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Set-Cookie", "fileDownload=true; path=/");
-            response.setHeader("Content-Disposition", "attachment;filename=\""+
-                    new String(fileName.getBytes("euc-kr"),"8859_1")+".xlsx\"");
-
-            wb.write(response.getOutputStream());
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
