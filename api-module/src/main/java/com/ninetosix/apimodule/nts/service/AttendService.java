@@ -1,5 +1,9 @@
 package com.ninetosix.apimodule.nts.service;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -19,11 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -160,6 +167,8 @@ public class AttendService {
             //템플릿 시트에 월 미리 세팅
             wb.getSheetAt(0)
                     .getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
+            wb.getSheetAt(0)
+                    .getRow(7).getCell(20).setCellValue(year + "-" + String.format("%02d", month) + "-01");
 
             XSSFSheet workSheet = wb.cloneSheet(0);
 
@@ -179,6 +188,11 @@ public class AttendService {
                 workSheet.getRow(nameRow).getCell(col).setCellValue(member.memberName());
 
                 for (int day : dates) {
+//                    LocalDate date = LocalDate.of(year,month,day);
+//
+//                    if(DayOfWeek.SATURDAY.equals(date.getDayOfWeek()) || DayOfWeek.SUNDAY.equals(date.getDayOfWeek()))
+//                        setCellStyle(wb,workSheet,row);
+
                     for (AttendDTO attend : member.attends()) {
                         if (Integer.valueOf(attend.attendDate()).equals(day)) {
                             setCellValue(workSheet, row, col, attend.inTime());
@@ -215,6 +229,17 @@ public class AttendService {
             workSheet.getRow(row).getCell(col + 1).setCellValue(minute);
         }
     }
+
+//    private void setCellStyle(XSSFWorkbook workbook, XSSFSheet sheet,int row) {
+//        CellStyle style = workbook.createCellStyle();
+//        for(int i = 0 ; i < 20 ; i++) {
+//            style = sheet.getRow(row).getCell(i).getCellStyle();
+//            style.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+//            sheet.getRow(row).getCell(i).setCellStyle(style);
+//            sheet.getRow(row+1).getCell(i).setCellStyle(style);
+//            sheet.getRow(row+2).getCell(i).setCellStyle(style);
+//        }
+//    }
 
     private void setWorkTimeCellValue(XSSFSheet workSheet, int row, int col, Long workTime) {
         if(workTime != null) {
