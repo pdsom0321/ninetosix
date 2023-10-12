@@ -148,7 +148,7 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    // TODO : 팀원 6명 이상일 경우 다음 sheet로 넘어가도록 대응, 주말/공휴일인 경우 배경색 회색 처리
+    // TODO : 주말/공휴일인 경우 배경색 회색 처리
     public void downloadExcel(HttpServletResponse response, long teamId, int year, int month) {
         List<ExportDTO> memberList = getAttends(teamId, year, month);
         List<Integer> dates = getDayOfMonth(year, month);
@@ -157,14 +157,24 @@ public class AttendService {
         try (FileInputStream file = new FileInputStream(docPath + templateFileName);
              XSSFWorkbook wb = new XSSFWorkbook(file)) {
 
-            XSSFSheet workSheet = wb.getSheetAt(0);
-            workSheet.getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
+            //템플릿 시트에 월 미리 세팅
+            wb.getSheetAt(0)
+                    .getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
+
+            XSSFSheet workSheet = wb.cloneSheet(0);
 
             // 템플릿 내의 이름, 출근시간, 퇴근시간, 근무시간 데이터 셋팅
             int nameRow = 6;
             int row = 8;
             int col = 2;
+
             for (ExportDTO member : memberList) {
+                //팀원 6명 초과 시 시트 복제 후 처음부터
+                if(col>18) {
+                    col = 2;
+                    workSheet = wb.cloneSheet(0);
+                }
+
                 //팀원 이름 셋팅
                 workSheet.getRow(nameRow).getCell(col).setCellValue(member.memberName());
 
@@ -182,6 +192,7 @@ public class AttendService {
                 row = 8;
                 col += 3;
             }
+            wb.removeSheetAt(0);
 
             String fileName = "[NineToSix] " + year + "년 " + month + "월 출근부";
 
