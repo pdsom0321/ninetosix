@@ -1,9 +1,6 @@
 package com.ninetosix.adminmodule.nts.board.controller;
 
-import com.ninetosix.adminmodule.nts.board.dto.BoardModifyReqDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardReqDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardResDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardsResDTO;
+import com.ninetosix.adminmodule.nts.board.dto.*;
 import com.ninetosix.adminmodule.nts.board.service.BoardService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -13,14 +10,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
-
     @ApiOperation(value = "게시글 등록")
     @PostMapping("board/{type}")
     public ResponseEntity<Void> createBoard(@PathVariable String type, @RequestBody BoardReqDTO reqDTO) {
@@ -30,7 +25,7 @@ public class BoardController {
 
     @ApiOperation(value = "type 별 게시글 목록")
     @GetMapping("board/{type}")
-    public ResponseEntity<List<BoardsResDTO>> boards(@PathVariable String type, @RequestParam(required = false) String keyword, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<BoardsResDTO> boards(@PathVariable String type, @RequestParam(required = false) String keyword, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         if(Objects.nonNull(keyword))
             return ResponseEntity.ok(boardService.boardsWithKeyword(type, keyword, pageable));
         else

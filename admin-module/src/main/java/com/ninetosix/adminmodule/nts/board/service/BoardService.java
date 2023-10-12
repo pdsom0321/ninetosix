@@ -1,9 +1,6 @@
 package com.ninetosix.adminmodule.nts.board.service;
 
-import com.ninetosix.adminmodule.nts.board.dto.BoardModifyReqDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardReqDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardResDTO;
-import com.ninetosix.adminmodule.nts.board.dto.BoardsResDTO;
+import com.ninetosix.adminmodule.nts.board.dto.*;
 import com.ninetosix.coremodule.entity.Board;
 import com.ninetosix.coremodule.repository.BoardRepository;
 import com.ninetosix.coremodule.vo.BoardType;
@@ -15,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,18 +23,33 @@ public class BoardService {
         boardRepository.save(Board.create(BoardType.valueOf(type), reqDTO.title(), reqDTO.content(), reqDTO.startDate(), reqDTO.endDate(), reqDTO.useYn(), reqDTO.deleteYn()));
     }
 
-    public List<BoardsResDTO> boards(String type, Pageable pageable) {
-        return boardRepository.findAllByType(BoardType.valueOf(type), pageable).stream()
-                .map(BoardsResDTO::of)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public BoardsResDTO boards(String type, Pageable pageable) {
+        List<BoardsDTO> boards = boardRepository.findAllByType(BoardType.valueOf(type), pageable).stream()
+                .map(BoardsDTO::of)
+                .toList();
+
+        long count = boardRepository.countAllByType(BoardType.valueOf(type));
+        int pageSize = pageable.getPageSize();
+        int totalPage = (int) Math.ceil( (double) count / pageSize);
+
+        return new BoardsResDTO(null, pageable.getPageNumber(), totalPage, boards);
     }
 
-    public List<BoardsResDTO> boardsWithKeyword(String type, String keyword, Pageable pageable) {
-        return boardRepository.findAllByTypeAndTitleContaining(BoardType.valueOf(type), keyword, pageable).stream()
-                .map(BoardsResDTO::of)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public BoardsResDTO boardsWithKeyword(String type, String keyword, Pageable pageable) {
+        List<BoardsDTO> boards = boardRepository.findAllByTypeAndTitleContaining(BoardType.valueOf(type), keyword, pageable).stream()
+                .map(BoardsDTO::of)
+                .toList();
+
+        long count = boardRepository.countAllByTypeAndTitleContaining(BoardType.valueOf(type), keyword);
+        int pageSize = pageable.getPageSize();
+        int totalPage = (int) Math.ceil((double) count / pageSize);
+
+        return new BoardsResDTO(keyword, pageable.getPageNumber(), totalPage, boards);
     }
 
+    @Transactional(readOnly = true)
     public BoardResDTO board(String type, long id) {
         Board board = boardRepository.findByIdAndType(id, BoardType.valueOf(type));
         return BoardResDTO.of(board);
