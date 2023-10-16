@@ -39,6 +39,10 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
+    private YNCode useYn;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 1)
     private YNCode deleteYn;
 
     @Enumerated(EnumType.STRING)
@@ -83,6 +87,7 @@ public class Member {
                 .contact(signupReqDTO.contact())
                 .company(company1)
                 .team(team1)
+                .useYn(YNCode.Y)
                 .deleteYn(YNCode.N)
                 .pushAgreeYn(YNCode.valueOf(signupReqDTO.pushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)

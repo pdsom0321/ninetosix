@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,6 +42,14 @@ public class Board {
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private YNCode deleteYn;
+
+    private String insertId;
+
+    private LocalDateTime insertDate;
+
+    private String updateId;
+
+    private LocalDateTime updateDate;
 
     public static Board create(BoardType type, String title, String content, String startDate, String endDate, YNCode useYn, YNCode deleteYn) {
         return Board.builder()
