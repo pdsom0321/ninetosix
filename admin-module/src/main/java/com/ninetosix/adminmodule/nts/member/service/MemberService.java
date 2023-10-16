@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     public List<MembersResDTO> members(long teamId) {

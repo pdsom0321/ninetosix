@@ -26,15 +26,9 @@ public class SpringSecurityConfig {
                 .antMatchers("/v2/api-docs/**",
                         "/swagger*/**",
                         "/webjars/**",
-                        "/login",
-                        "/**").permitAll()
-                .antMatchers("/").hasAuthority("ROLE_ADMIN")
+                        "/login").permitAll()
+                .antMatchers("/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
-
-                // 시큐리티는 기본적으로 세션을 사용
-                // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
-                .and()
-                .sessionManagement()
 
                 .and()
                 .formLogin()
@@ -43,14 +37,16 @@ public class SpringSecurityConfig {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", true)
-                .permitAll()
 
                 .and()
                 .userDetailsService(customUserDetailsService)
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+
                 .and()
                 .logout()
-                .logoutSuccessUrl("/login");
+                .logoutSuccessUrl("/login")
+                .invalidateHttpSession(true) // 로그아웃 후 세션 초기화 설정
+                .deleteCookies("JSESSIONID"); // 로그아웃 후 쿠기 삭제 설정
 
         return http.build();
     }

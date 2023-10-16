@@ -3,13 +3,16 @@ package com.ninetosix.adminmodule.nts.company.controller;
 import com.ninetosix.adminmodule.nts.company.dto.CompanyReqDTO;
 import com.ninetosix.adminmodule.nts.company.dto.CompanyResDTO;
 import com.ninetosix.adminmodule.nts.company.service.CompanyService;
+import groovy.util.logging.Slf4j;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CompanyController {
@@ -24,7 +27,10 @@ public class CompanyController {
 
     @ApiOperation(value = "회사 목록 조회")
     @GetMapping ("company")
-    public ResponseEntity<List<CompanyResDTO>> companies() {
+    public ResponseEntity<List<CompanyResDTO>> companies(Principal principal) {
+        // 현재 로그인한 사용자 정보 가져오기 principal.getName()
+        System.out.println("principal.getName() = " + principal.getName());
+
         return ResponseEntity.ok(companyService.companies());
     }
 
