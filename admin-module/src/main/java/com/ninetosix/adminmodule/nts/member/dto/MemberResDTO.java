@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 public record MemberResDTO(
         long id,
         String email,
+        String name,
         String contact,
+        YNCode useYn,
         YNCode deleteYn,
         YNCode pushAgreeYn,
         LocalDateTime insertDate,
@@ -16,6 +18,6 @@ public record MemberResDTO(
         String teamName,
         String companyName) {
     public static MemberResDTO of(Member member) {
-        return new MemberResDTO(member.getId(), member.getEmail(), member.getContact(), member.getDeleteYn(), member.getPushAgreeYn(), member.getInsertDate(), member.getUpdateDate(), member.getTeam().getName(), member.getCompany().getName());
+        return new MemberResDTO(member.getId(), member.getName(), member.getEmail(), member.getContact(), member.getUseYn(), member.getDeleteYn(), member.getPushAgreeYn(), member.getInsertDate(), member.getUpdateDate(), member.getTeam().getName(), member.getCompany().getName());
     }
 }
