@@ -7,13 +7,18 @@ const routes = [
     children: [
       {
         path: '',
-        name: '회사관리',
+        name: '회사 관리',
         component: () => import('@/views/company/index.vue')
       },
       {
         path: 'locations',
-        name: '위치관리',
+        name: '위치 관리',
         component: () => import('@/views/company/locations.vue')
+      },
+      {
+        path: 'customer',
+        name: '사용자 관리',
+        component: () => import('@/views/company/customer.vue')
       }
     ],
     meta: {

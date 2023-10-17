@@ -69,8 +69,9 @@ const close = () => {
         커스텀 이벤트 바인딩
   -->
   <div class="popup-container text-center" :class="{ show: state.show, showing: state.showing }">
-    <div class="card popup-component border-0 h-75">
+    <div class="card popup-component border-0">
       <div class="card-header text-end p-0 bg-secondary border-0">
+        <span class="text-start text-light float-start ms-2 p-2">-</span>
         <button
           class="px-3 py-2 btn btn-sm btn-outline-secondary text-light close-btn fw-bold"
           @click="popupClose"
@@ -120,6 +121,7 @@ const close = () => {
   left: 50%;
   width: auto;
   min-width: 700px;
+  max-height: 900px;
   transition: all 0.1s 0.1s;
 }
 </style>

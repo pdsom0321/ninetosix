@@ -71,6 +71,7 @@ const openModal = (tid, mid) => {
   <div class="row">
     <v-select
       class="my-1"
+      style="z-index: 1040"
       :options="companies"
       :reduce="(x) => x.id"
       label="name"
@@ -78,48 +79,51 @@ const openModal = (tid, mid) => {
     ></v-select>
     <v-select
       class="my-1"
+      style="z-index: 1030"
       :options="teams"
       :reduce="(x) => x.id"
       label="name"
       v-model="teamId"
     ></v-select>
-    <table class="table table-hover table-bordered h-75 text-center">
-      <colgroup>
-        <col width="*" />
-        <col width="*" />
-        <col width="*" />
-        <col width="*" />
-        <col width="5%" />
-        <col width="5%" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th class="text-start">email</th>
-          <th>이름</th>
-          <th>소속</th>
-          <th>use</th>
-          <th>delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in customers">
-          <td>{{ item.id }}</td>
-          <td class="text-start">{{ item.email }}</td>
-          <td>
-            <button
-              class="btn border-0 bg-transparent text-primary"
-              @click="openModal(teamId, item.id)"
-            >
-              {{ item.name }}
-            </button>
-          </td>
-          <td>{{ item.companyName }} [{{ item.teamName }}]</td>
-          <!-- <td>{{ item.teamName }}</td> -->
-          <td>{{ item.useYn }}</td>
-          <td>{{ item.deleteYn }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div style="max-height: 700px" class="overflow-auto">
+      <table class="table table-hover table-bordered h-75 text-center">
+        <colgroup>
+          <col width="*" />
+          <col width="*" />
+          <col width="*" />
+          <col width="*" />
+          <col width="5%" />
+          <col width="5%" />
+        </colgroup>
+        <thead class="sticky-top">
+          <tr>
+            <th>ID</th>
+            <th class="text-start">email</th>
+            <th>이름</th>
+            <th>소속</th>
+            <th>use</th>
+            <th>delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in customers">
+            <td>{{ item.id }}</td>
+            <td class="text-start">{{ item.email }}</td>
+            <td>
+              <button
+                class="btn border-0 bg-transparent text-primary"
+                @click="openModal(teamId, item.id)"
+              >
+                {{ item.name }}
+              </button>
+            </td>
+            <td>{{ item.companyName }} [{{ item.teamName }}]</td>
+            <!-- <td>{{ item.teamName }}</td> -->
+            <td>{{ item.useYn }}</td>
+            <td>{{ item.deleteYn }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
