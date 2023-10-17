@@ -24,6 +24,7 @@ const locationAPI = ({ id, method, data }, callback) => {
   if (data) options.data = data
 
   lib.api(options).then((res) => {
+    console.log(res)
     callback(res)
   })
 }
@@ -236,9 +237,24 @@ const setSearch = (event) => {
                 />
               </td>
               <td>
-                <button class="text-primary border-0 bg-transparent" v-if="!props.data?.isModal">
+                <div class="dropdown">
+                  <button
+                    class="text-primary border-0 bg-transparent"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ location.companies }}
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li v-for="company in location.companyList">
+                      <a class="dropdown-item" href="#">{{ company.name }}</a>
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="text-primary border-0 bg-transparent" v-if="!props.data?.isModal">
                   {{ location.companies }}
-                </button>
+                </button> -->
               </td>
               <td v-if="!props.data?.isModal">
                 <div class="btn-group" v-if="!location.editMode">
