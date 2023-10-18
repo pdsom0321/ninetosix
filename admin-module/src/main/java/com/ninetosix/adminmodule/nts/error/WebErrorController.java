@@ -1,14 +1,20 @@
 package com.ninetosix.adminmodule.nts.error;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class WebErrorController implements ErrorController {
+    // url 직접 접근할 경우 대체 경로 추가
+    private final String ERROR_PATH = "/error";
 
-    @GetMapping("/error")
-    public String redirectRoot() {
-        return "index.html";
+    @GetMapping(ERROR_PATH)
+    public String redirectRoot(){
+        return "forward:/index.html";
+    }
+
+    public String getErrorPath(){
+        return null;
     }
 }
