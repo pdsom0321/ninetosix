@@ -57,7 +57,7 @@ const toggleSidebar = () => {
           </ul>
         </div>
       </div>
-      <a href="#" class="nav__link">
+      <a href="/logout" class="nav__link">
         <ion-icon name="log-out-outline" class="nav__icon"></ion-icon>
         <span class="nav_name">Logout</span>
       </a>

@@ -53,6 +53,27 @@ const popupClose = (data) => {
   close()
 }
 
+const componentCallback = (eventNm, data) => {
+  if (!eventNm) {
+    console.warn('이벤트명이 없습니다.')
+    return
+  }
+
+  const event = props.settings[`_${eventNm}`]
+  if (!event) {
+    console.warn(`${eventNm}으로 이벤트가 정의되어 있지 않습니다.`)
+  }
+  event(data)
+  const eventOptions = props.settings[`_${eventNm}Options`]
+  if (eventOptions) {
+    if (eventOptions.close) {
+      popupClose()
+    } else if (eventOptions.dismissClose) {
+      close()
+    }
+  }
+}
+
 const close = () => {
   state.showing = false
   setTimeout(() => {
@@ -69,7 +90,7 @@ const close = () => {
         커스텀 이벤트 바인딩
   -->
   <div class="popup-container text-center" :class="{ show: state.show, showing: state.showing }">
-    <div class="card popup-component border-0">
+    <div class="card h-100 popup-component border-0">
       <div class="card-header text-end p-0 bg-secondary border-0">
         <span class="text-start text-light float-start ms-2 p-2">-</span>
         <button
@@ -80,13 +101,14 @@ const close = () => {
           X
         </button>
       </div>
-      <div class="card-body p-0 overflow-auto">
+      <div class="card-body h-100 p-0 overflow-auto">
         <component
           v-if="defineComponent"
           :is="defineComponent"
           :data="props.settings.data"
           @ok="popupOk"
           @close="popupClose"
+          @callback="componentCallback"
         />
       </div>
     </div>

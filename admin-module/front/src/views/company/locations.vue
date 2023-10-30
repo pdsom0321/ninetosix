@@ -3,6 +3,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import lib from '@/util/apiUtil'
 import { useCompanyStore } from '@/stores/company'
 import _ from 'lodash'
+import popupModule from '@/util/popupModule'
 
 const store = useCompanyStore()
 
@@ -96,30 +97,37 @@ const filteredLocList = computed(() => {
   return locations.filter((x) => x.name.indexOf(search.value) > -1)
 })
 
-const addLocation = (idx) => {
+const addLocation = (place) => {
   const param = {
     method: 'post',
     data: {
-      name: addList[idx].name,
-      latitude: addList[idx].latitude,
-      longitude: addList[idx].longitude
+      name: place.name,
+      latitude: place.lat,
+      longitude: place.lng
+      // name: addList[idx].name,
+      // latitude: addList[idx].latitude,
+      // longitude: addList[idx].longitude
     }
   }
 
   locationAPI(param, () => {
-    addList.splice(idx, 1)
+    // addList.splice(idx, 1)
     getLocations()
   })
 }
 
-const saveLocation = (idx) => {
+const saveLocation = (place) => {
   const param = {
-    id: locations[idx].id,
+    // id: locations[idx].id,
+    id: place.id,
     method: 'put',
     data: {
-      name: locations[idx].name,
-      latitude: locations[idx].latitude,
-      longitude: locations[idx].longitude
+      name: place.name,
+      latitude: place.lat,
+      longitude: place.lng
+      // name: locations[idx].name,
+      // latitude: locations[idx].latitude,
+      // longitude: locations[idx].longitude
     }
   }
 
@@ -144,7 +152,7 @@ const delLocation = (idx) => {
 const addCompanyLocation = (idx) => {
   lib
     .api({
-      url: 'company-location',
+      url: '/company-location',
       data: {
         companyId: store.compId,
         locationId: locations[idx].id
@@ -160,6 +168,30 @@ const addCompanyLocation = (idx) => {
 
 const setSearch = (event) => {
   search.value = event.target.value
+}
+
+const openMap = (location, method) => {
+  popupModule
+    .popup({
+      component: import('@/components/kakaoMap.vue'),
+      data: {
+        isModal: true,
+        location: location,
+        method: method
+      },
+      event: ['addLocation', 'saveLocation']
+    })
+    .ok((data) => {
+      console.log(data)
+    })
+    .saveLocation((data) => {
+      saveLocation(data)
+      alert('수정되었습니다.')
+    })
+    .addLocation((data) => {
+      addLocation(data)
+      alert('등록되었습니다.')
+    })
 }
 
 ;(() => {
@@ -178,20 +210,26 @@ const setSearch = (event) => {
       </div> -->
       <div class="card-body h-100 overflow-auto">
         <table class="table table-hover align-middle">
-          <!-- <colgroup>
+          <colgroup>
+            <col width="" />
+            <col width="30%" />
             <col width="" />
             <col width="" />
             <col width="" />
             <col width="" />
-            <col width="" />
-            <col width="10%" />
-          </colgroup> -->
+          </colgroup>
           <thead class="text-end">
             <tr>
               <th colspan="100">
-                <button class="btn btn-sm btn-outline-secondary" @click="addList.push({})">
-                  신규
+                <button
+                  class="btn btn-sm btn-outline-secondary mx-2"
+                  @click="openMap(null, 'post')"
+                >
+                  추가
                 </button>
+                <!-- <button class="btn btn-sm btn-outline-secondary" @click="addList.push({})">
+                  신규
+                </button> -->
               </th>
             </tr>
           </thead>
@@ -210,31 +248,36 @@ const setSearch = (event) => {
             <tr v-for="(location, index) in filteredLocList">
               <td>{{ location.id }}</td>
               <td>
-                <input
+                <a href="#" @click="openMap(location, 'put')" class="text-primary">{{
+                  location.name
+                }}</a>
+                <!-- <input
                   class="form-control text-center"
                   :class="!location.editMode ? 'border-0 bg-transparent' : ''"
                   type="text"
                   :readonly="!location.editMode"
                   v-model="location.name"
-                />
+                /> -->
               </td>
               <td>
-                <input
+                {{ location.latitude }}
+                <!-- <input
                   class="form-control text-center"
                   :class="!location.editMode ? 'border-0 bg-transparent' : ''"
                   type="text"
                   :readonly="!location.editMode"
                   v-model="location.latitude"
-                />
+                /> -->
               </td>
               <td>
-                <input
+                {{ location.longitude }}
+                <!-- <input
                   class="form-control text-center"
                   :class="!location.editMode ? 'border-0 bg-transparent' : ''"
                   type="text"
                   :readonly="!location.editMode"
                   v-model="location.longitude"
-                />
+                /> -->
               </td>
               <td>
                 <div class="dropdown">
@@ -258,12 +301,12 @@ const setSearch = (event) => {
               </td>
               <td v-if="!props.data?.isModal">
                 <div class="btn-group" v-if="!location.editMode">
-                  <button
+                  <!-- <button
                     class="btn btn-sm btn-outline-secondary"
                     @click="location.editMode = true"
                   >
                     수정
-                  </button>
+                  </button> -->
                   <button class="btn btn-sm btn-outline-danger" @click="delLocation(index)">
                     삭제
                   </button>

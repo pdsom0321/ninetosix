@@ -29,6 +29,27 @@ const popupModule = {
         return promise
       }
     })
+    if (settings.event) {
+      const objConstructor = settings.event.constructor
+      if (objConstructor === Array) {
+        for (const eventNm of settings.event) {
+          promise[eventNm] = (resolve) => {
+            settings[`_${eventNm}`] = resolve
+            return promise
+          }
+        }
+      } else if (objConstructor === Object) {
+        for (const [eventNm, evtOpts] of Object.entries(settings.event)) {
+          promise[eventNm] = (resolve) => {
+            settings[`_${eventNm}`] = resolve
+            if (evtOpts) {
+              settings[`_${eventNm}Options`] = evtOpts
+            }
+            return promise
+          }
+        }
+      }
+    }
 
     Object.assign(settings, {
       $promise() {

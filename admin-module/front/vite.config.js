@@ -11,6 +11,12 @@ dotenvExpand.expand(
     path: path.join(__dirname, `env/.env.${process.env.profile}`)
   })
 )
+dotenvExpand.expand(
+  dotenv.config({
+    path: path.join(__dirname, `env/.env`)
+  })
+)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   devServer: {
